@@ -29,12 +29,17 @@
 
   <section class="abertura">
     <div class="abertura-marca">
-      <h1><img src="assets/marca/logo-completa.webp" alt="Casa Mar de Mel, Tabatinga. Seu refúgio pé na areia em Tabatinga." width="770" height="680" fetchpriority="high"></h1>
+      <h1>
+        <img class="logo-cor" src="assets/marca/logo-completa.webp" alt="Casa Mar de Mel, Tabatinga" width="770" height="680" fetchpriority="high">
+        <img class="logo-creme" src="assets/marca/logo-creme.webp" alt="Casa Mar de Mel, Tabatinga" width="770" height="626">
+      </h1>
+      <p class="chamada">Seu refúgio pé na areia em Tabatinga</p>
       <p class="local">Última casa da Rua Ouricuri, em Tabatinga II, Conde - PB. De frente para o mar, ao lado de Coqueirinho.</p>
     </div>
-    <div class="abertura-foto">
-      <img src="fotos/casa/rede-vista-mar.jpg" alt="Rede na varanda da Casa Mar de Mel com o mar ao fundo">
-    </div>
+    <picture class="abertura-fundo">
+      <source media="(min-width: 761px)" srcset="fotos/regiao/nascer-do-sol.jpg">
+      <img src="fotos/casa/rede-vista-mar.jpg" alt="Vista do mar em frente à Casa Mar de Mel">
+    </picture>
   </section>
 
   <nav class="envelope atalhos" aria-label="Seções">
