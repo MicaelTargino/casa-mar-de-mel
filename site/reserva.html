@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Reserva · Casa Mar de Mel</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%230f4c5c%27/%3E%3Cpath d=%27M5 20c3-3 5-3 8 0s5 3 8 0 5-3 6-1%27 stroke=%27%23e3a33b%27 stroke-width=%273%27 fill=%27none%27 stroke-linecap=%27round%27/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&family=Gloock&display=swap">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="topo">
+    <div class="envelope">
+      <a class="marca" href="index.html">Casa Mar de Mel</a>
+      <a class="btn btn-linha" id="zap-topo" href="#" target="_blank" rel="noopener">WhatsApp</a>
+    </div>
+  </header>
+
+  <section class="reserva-topo">
+    <div class="envelope">
+      <h1>Sua reserva</h1>
+      <p>Preencha seus dados, envie os documentos e revise o contrato. No fim, você baixa o contrato em PDF e assina pelo gov.br. Ele é o único documento que precisa de assinatura.</p>
+      <div class="estadia" id="estadia"></div>
+    </div>
+  </section>
+
+  <div class="envelope">
+    <ol class="passos" id="passos">
+      <li data-p="1">Seus dados</li>
+      <li data-p="2">Documentos</li>
+      <li data-p="3">Contrato</li>
+      <li data-p="4">Assinatura</li>
+    </ol>
+  </div>
+
+  <div class="envelope reserva-corpo">
+    <main>
+      <!-- Passo 1 -->
+      <section class="painel" data-painel="1">
+        <h2>Seus dados</h2>
+        <p>Quem preenche é o responsável pela reserva, que assina o contrato.</p>
+        <form id="form-dados" novalidate>
+          <fieldset>
+            <legend>Responsável</legend>
+            <label for="f-nome">Nome completo<input id="f-nome" name="nome" autocomplete="name" required></label>
+            <div class="campos-2">
+              <label for="f-tipoDoc">Documento
+                <select id="f-tipoDoc" name="tipoDoc"><option value="cpf">CPF</option><option value="passaporte">Passaporte</option></select>
+              </label>
+              <label for="f-documento">Número<input id="f-documento" name="documento" inputmode="numeric" required></label>
+            </div>
+            <label for="f-endereco">Endereço completo<span class="ajuda">Rua, número, bairro, cidade, estado e CEP.</span><input id="f-endereco" name="endereco" autocomplete="street-address" required></label>
+            <div class="campos-2">
+              <label for="f-telefone">Telefone (WhatsApp)<input id="f-telefone" name="telefone" type="tel" autocomplete="tel" required></label>
+              <label for="f-email">E-mail<input id="f-email" name="email" type="email" autocomplete="email" required></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Período e pessoas</legend>
+            <div class="campos-2">
+              <label for="f-entrada">Entrada<input id="f-entrada" name="entrada" type="date" required></label>
+              <label for="f-saida">Saída<input id="f-saida" name="saida" type="date" required></label>
+            </div>
+            <div class="campos-2">
+              <label for="f-adultos">Adultos<span class="ajuda">13 anos ou mais</span><input id="f-adultos" name="adultos" type="number" min="1" max="12" value="2" required></label>
+              <label for="f-criancas">Crianças<span class="ajuda">Até 12 anos</span><input id="f-criancas" name="criancas" type="number" min="0" max="11" value="0" required></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Quem vai ficar na casa</legend>
+            <p class="ajuda" style="color:var(--tinta-suave);font-size:var(--t-peq)">Inclua você. Para crianças, informe a idade e o adulto responsável.</p>
+            <div id="lista-hospedes" style="display:grid;gap:.75rem"></div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Chegada</legend>
+            <div class="campos-2">
+              <label for="f-horaChegada">Horário previsto<span class="ajuda">A partir das 15h</span><input id="f-horaChegada" name="horaChegada" type="time"></label>
+              <label for="f-veiculos">Carros<span class="ajuda">Estacionamento no local</span><input id="f-veiculos" name="veiculos" type="number" min="0" max="6" value="1"></label>
+            </div>
+            <label for="f-emergencia">Contato de emergência<span class="ajuda">Opcional. Nome e telefone de alguém que não vai viajar.</span><input id="f-emergencia" name="emergencia"></label>
+            <label for="f-pet">Vai levar animal de estimação?
+              <select id="f-pet" name="pet"><option value="não">Não</option><option value="sim">Sim, um animal</option></select>
+            </label>
+          </fieldset>
+
+          <p class="msg-erro" id="erro-1" role="alert" hidden></p>
+          <div class="acoes"><span></span><button class="btn btn-mel" type="submit">Continuar</button></div>
+        </form>
+      </section>
+
+      <!-- Passo 2 -->
+      <section class="painel" data-painel="2" hidden>
+        <h2>Documentos</h2>
+        <p>Usamos estes arquivos só para confirmar quem está assinando o contrato. Foto do celular serve, desde que dê para ler.</p>
+        <form id="form-docs" novalidate>
+          <div class="upload" id="up-doc">
+            <label for="f-arqDoc">Documento com foto<span class="ajuda">RG, CNH ou passaporte, frente e verso legíveis. Imagem ou PDF.</span>
+              <input id="f-arqDoc" type="file" accept="image/*,application/pdf" required>
+            </label>
+            <div class="previa" hidden></div>
+          </div>
+          <div class="upload" id="up-res">
+            <label for="f-arqRes">Comprovante de residência<span class="ajuda">Conta de água, luz, telefone ou internet dos últimos 3 meses.</span>
+              <input id="f-arqRes" type="file" accept="image/*,application/pdf" required>
+            </label>
+            <div class="previa" hidden></div>
+          </div>
+          <p class="nota-privacidade" id="nota-privacidade"></p>
+          <p class="msg-erro" id="erro-2" role="alert" hidden></p>
+          <div class="acoes"><button class="btn btn-linha" type="button" data-voltar>Voltar</button><button class="btn btn-mel" type="submit">Ver o contrato</button></div>
+        </form>
+      </section>
+
+      <!-- Passo 3 -->
+      <section class="painel" data-painel="3" hidden>
+        <h2>Revise o contrato</h2>
+        <p>Seus dados já estão no contrato. Os anexos de resumo, regulamento e inventário fazem parte do mesmo documento, então uma assinatura cobre tudo.</p>
+        <div class="bloco">
+          <div class="doc doc-folha" id="contrato" tabindex="0"></div>
+          <label class="aceite" for="f-aceite"><input type="checkbox" id="f-aceite"> Li o contrato e os anexos A, B e C e concordo com as condições.</label>
+          <div class="acoes"><button class="btn btn-linha" type="button" data-voltar>Corrigir meus dados</button><button class="btn btn-mel" type="button" id="btn-ir-assinar" disabled>Continuar para assinatura</button></div>
+        </div>
+      </section>
+
+      <!-- Passo 4 -->
+      <section class="painel" data-painel="4" hidden>
+        <h2>Assine pelo gov.br</h2>
+        <p>A assinatura do gov.br é gratuita e tem validade jurídica. Você precisa de uma conta gov.br nível prata ou ouro.</p>
+        <div class="bloco">
+          <div class="cartao-final">
+            <ol class="passo-a-passo">
+              <li><strong>Baixe o contrato.</strong> <button class="btn btn-mel" type="button" id="btn-pdf" style="margin-top:.5rem">Baixar contrato em PDF</button></li>
+              <li>Abra o <a href="https://assinador.iti.br" target="_blank" rel="noopener">assinador do gov.br</a> e entre com sua conta.</li>
+              <li>Escolha o arquivo do contrato, posicione a assinatura na última página do contrato e clique em assinar.</li>
+              <li>Baixe o arquivo assinado e envie para a gente pelo WhatsApp. Depois a Casa Mar de Mel assina e te devolve a via final.</li>
+            </ol>
+            <a class="btn btn-zap" id="zap-assinado" href="#" target="_blank" rel="noopener">Enviar contrato assinado pelo WhatsApp</a>
+          </div>
+          <p class="nota-privacidade">Depois de pagar o sinal, você recebe o guia do hóspede com Wi-Fi, chaves e orientações de chegada.</p>
+          <div class="acoes"><button class="btn btn-linha" type="button" data-voltar>Voltar ao contrato</button><span></span></div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="lateral" aria-label="Documentos da reserva">
+      <h2>Para consultar</h2>
+      <button type="button" data-doc="resumo">Resumo da reserva</button>
+      <button type="button" data-doc="regulamento">Regulamento da casa</button>
+      <button type="button" data-doc="inventario">Inventário</button>
+      <button type="button" data-doc="guia">Guia do hóspede</button>
+      <p class="lateral-zap" id="lateral-zap"></p>
+    </aside>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.10/pdfmake.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.10/vfs_fonts.js" defer></script>
+  <script src="assets/config.js"></script>
+  <script src="assets/app.js"></script>
+  <script>
+  (function () {
+    const { C, money, zap, orcamento, parseISO, iso, br, brLong, addDays, esc } = MDM;
+    MDM.faixaTeste();
+    const $ = (id) => document.getElementById(id);
+    const q = new URLSearchParams(location.search);
+    const travado = q.has("entrada") && q.has("saida");
+    const desconto = Number(q.get("desconto") || 0);
+
+    $("zap-topo").href = zap(`Olá! Estou preenchendo a reserva da ${C.nome} e tenho uma dúvida.`);
+    $("lateral-zap").textContent = `WhatsApp da casa: ${C.whatsappExibicao}`;
+    $("nota-privacidade").textContent = `Os arquivos ficam guardados com acesso restrito e são apagados ${C.retencaoDocumentos}, salvo obrigação legal. Não pedimos outros documentos.`;
+
+    /* ---------- Rascunho no aparelho ---------- */
+    const CHAVE = "mdm-reserva-rascunho";
+    const campos = ["nome", "tipoDoc", "documento", "endereco", "telefone", "email", "entrada", "saida", "adultos", "criancas", "horaChegada", "veiculos", "emergencia", "pet"];
+    function lerRascunho() { try { return JSON.parse(localStorage.getItem(CHAVE) || "{}"); } catch { return {}; } }
+    function salvarRascunho() { try { localStorage.setItem(CHAVE, JSON.stringify({ ...coletar(), hospedesLista: lerHospedes() })); } catch {} }
+    const rasc = lerRascunho();
+    campos.forEach((c) => { if (rasc[c] != null) $("f-" + c).value = rasc[c]; });
+    if (travado) {
+      $("f-entrada").value = q.get("entrada"); $("f-saida").value = q.get("saida");
+      $("f-entrada").readOnly = $("f-saida").readOnly = true;
+      if (q.get("adultos")) $("f-adultos").value = q.get("adultos");
+      if (q.get("criancas")) $("f-criancas").value = q.get("criancas");
+    }
+
+    function coletar() { const d = {}; campos.forEach((c) => (d[c] = $("f-" + c).value.trim())); return d; }
+
+    /* ---------- Lista de hóspedes ---------- */
+    function linhaHospede(i, h = {}) {
+      const ehResp = i === 0;
+      const idades = ['<option value="Adulto">Adulto</option>'].concat(Array.from({ length: 13 }, (_, k) => `<option value="${k} anos">${k} ${k === 1 ? "ano" : "anos"}</option>`)).join("");
+      return `<div class="hospede-linha" data-i="${i}">
+        <label for="h-nome-${i}">${ehResp ? "Você (responsável)" : `Hóspede ${i + 1}`}<input id="h-nome-${i}" data-c="nome" value="${esc(h.nome || "")}" ${ehResp ? "readonly" : ""} required></label>
+        <label for="h-idade-${i}">Idade<select id="h-idade-${i}" data-c="idade">${idades}</select></label>
+        <label for="h-resp-${i}">Responsável, se criança<input id="h-resp-${i}" data-c="responsavel" value="${esc(h.responsavel || "")}"></label>
+        <span></span>
+      </div>`;
+    }
+    function lerHospedes() {
+      return [...document.querySelectorAll(".hospede-linha")].map((l) => ({
+        nome: l.querySelector('[data-c="nome"]').value.trim(),
+        idade: l.querySelector('[data-c="idade"]').value,
+        responsavel: l.querySelector('[data-c="responsavel"]').value.trim(),
+      }));
+    }
+    function montarHospedes() {
+      const atuais = lerHospedes().length ? lerHospedes() : (rasc.hospedesLista || []);
+      const a = Math.max(1, +$("f-adultos").value || 1), c = Math.max(0, +$("f-criancas").value || 0);
+      const n = Math.min(C.capacidade, a + c);
+      const box = $("lista-hospedes");
+      box.innerHTML = Array.from({ length: n }, (_, i) => linhaHospede(i, atuais[i])).join("");
+      [...box.querySelectorAll(".hospede-linha")].forEach((l, i) => {
+        const h = atuais[i]; const s = l.querySelector('[data-c="idade"]');
+        s.value = h?.idade || (i < a ? "Adulto" : "8 anos");
+      });
+      $("h-nome-0").value = $("f-nome").value;
+    }
+    montarHospedes();
+    $("f-adultos").addEventListener("change", montarHospedes);
+    $("f-criancas").addEventListener("change", montarHospedes);
+    $("f-nome").addEventListener("input", () => { const h = $("h-nome-0"); if (h) h.value = $("f-nome").value; });
+
+    /* ---------- Resumo no topo ---------- */
+    function calc() {
+      const d = coletar();
+      const r = orcamento({ entrada: d.entrada, saida: d.saida, hospedes: (+d.adultos || 0) + (+d.criancas || 0), desconto });
+      return { d, r };
+    }
+    function topo() {
+      const { d, r } = calc();
+      $("estadia").innerHTML = r.erro
+        ? `<div><small>Período</small><strong>Escolha as datas abaixo</strong></div>`
+        : `<div><small>Entrada</small><strong>${esc(brLong(r.entrada))}, ${C.checkin}</strong></div>
+           <div><small>Saída</small><strong>${esc(brLong(r.saida))}, ${C.checkout}</strong></div>
+           <div><small>Diárias</small><strong>${r.noites}</strong></div>
+           <div><small>Total</small><strong>${money(r.total)}</strong></div>`;
+    }
+    topo();
+    document.getElementById("form-dados").addEventListener("input", () => { topo(); salvarRascunho(); });
+
+    /* ---------- Navegação ---------- */
+    let passo = 1;
+    function ir(p, rolar = true) {
+      passo = p;
+      document.querySelectorAll("[data-painel]").forEach((s) => (s.hidden = +s.dataset.painel !== p));
+      document.querySelectorAll("#passos li").forEach((li) => {
+        const n = +li.dataset.p;
+        li.toggleAttribute("aria-current", n === p); if (n === p) li.setAttribute("aria-current", "step");
+        li.classList.toggle("feito", n < p);
+      });
+      if (rolar) window.scrollTo({ top: document.getElementById("passos").offsetTop - 70, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    }
+    document.querySelectorAll("[data-voltar]").forEach((b) => b.addEventListener("click", () => ir(passo - 1)));
+    ir(1, false);
+
+    /* ---------- Validação passo 1 ---------- */
+    function cpfValido(v) {
+      const s = v.replace(/\D/g, "");
+      if (s.length !== 11 || /^(\d)\1+$/.test(s)) return false;
+      const dv = (n) => { let t = 0; for (let i = 0; i < n; i++) t += +s[i] * (n + 1 - i); const r = (t * 10) % 11; return r === 10 ? 0 : r; };
+      return dv(9) === +s[9] && dv(10) === +s[10];
+    }
+    function marcar(id, ok) { $(id).setAttribute("aria-invalid", ok ? "false" : "true"); return ok; }
+    $("form-dados").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const d = coletar(); const erros = [];
+      ["nome", "documento", "endereco", "telefone", "email", "entrada", "saida"].forEach((c) => { if (!marcar("f-" + c, !!d[c])) erros.push(c); });
+      if (d.nome && d.nome.split(/\s+/).length < 2) { marcar("f-nome", false); erros.push("Escreva o nome completo, com sobrenome."); }
+      if (d.tipoDoc === "cpf" && d.documento && !marcar("f-documento", cpfValido(d.documento))) erros.push("O CPF não confere. Confira os números.");
+      if (d.email && !marcar("f-email", /^\S+@\S+\.\S+$/.test(d.email))) erros.push("O e-mail parece incompleto.");
+      const r = calc().r;
+      if (!erros.length && r.erro) erros.push(r.erro);
+      const hs = lerHospedes();
+      hs.forEach((h, i) => { if (!marcar("h-nome-" + i, !!h.nome)) erros.push("nome do hóspede"); if (h.idade !== "Adulto" && !marcar("h-resp-" + i, !!h.responsavel)) erros.push("Informe o adulto responsável por cada criança."); });
+      const box = $("erro-1");
+      if (erros.length) {
+        const legiveis = erros.filter((x) => x.length > 12);
+        box.textContent = legiveis.length ? legiveis[0] : "Preencha os campos marcados em vermelho.";
+        box.hidden = false; return;
+      }
+      box.hidden = true; salvarRascunho(); ir(2);
+    });
+
+    /* ---------- Passo 2: uploads ---------- */
+    const arquivos = {};
+    function prever(inputId, boxId, chave) {
+      $(inputId).addEventListener("change", (e) => {
+        const f = e.target.files[0]; const box = $(boxId); const prev = box.querySelector(".previa");
+        if (!f) { box.classList.remove("ok"); prev.hidden = true; delete arquivos[chave]; return; }
+        if (f.size > 10 * 1024 * 1024) { e.target.value = ""; prev.hidden = false; prev.textContent = "Arquivo acima de 10 MB. Tire uma foto com menos zoom ou envie em PDF."; return; }
+        arquivos[chave] = f; box.classList.add("ok"); prev.hidden = false;
+        const tam = (f.size / 1024 / 1024).toFixed(1).replace(".", ",") + " MB";
+        if (f.type.startsWith("image/")) {
+          const url = URL.createObjectURL(f);
+          prev.innerHTML = `<img src="${url}" alt="Prévia do arquivo enviado"><span>${esc(f.name)} · ${tam}</span>`;
+        } else prev.innerHTML = `<span>${esc(f.name)} · ${tam}</span>`;
+      });
+    }
+    prever("f-arqDoc", "up-doc", "doc");
+    prever("f-arqRes", "up-res", "res");
+    $("form-docs").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const faltam = [!arquivos.doc && "o documento com foto", !arquivos.res && "o comprovante de residência"].filter(Boolean);
+      if (faltam.length) { $("erro-2").textContent = `Falta enviar ${faltam.join(" e ")}.`; $("erro-2").hidden = false; return; }
+      $("erro-2").hidden = true; montarContrato(); ir(3);
+    });
+
+    /* ---------- Passo 3: contrato ---------- */
+    let blocos = null, dadosFinais = null;
+    function dadosContrato() {
+      const { d, r } = calc();
+      return { r, d: { ...d, codigo: q.get("codigo") || MDM.codigoReserva(d.entrada, d.nome), hospedesLista: lerHospedes() } };
+    }
+    function montarContrato() {
+      const { r, d } = dadosContrato();
+      dadosFinais = { r, d };
+      blocos = MDM.contrato(r, d);
+      $("contrato").innerHTML = MDM.toHTML(blocos);
+      $("contrato").scrollTop = 0;
+      $("f-aceite").checked = false; $("btn-ir-assinar").disabled = true;
+    }
+    $("f-aceite").addEventListener("change", (e) => ($("btn-ir-assinar").disabled = !e.target.checked));
+    $("btn-ir-assinar").addEventListener("click", () => {
+      const { r, d } = dadosFinais;
+      $("zap-assinado").href = zap(`Olá! Segue o contrato assinado da reserva ${d.codigo} (${br(r.entrada)} a ${br(r.saida)}), em nome de ${d.nome}.`);
+      ir(4);
+    });
+
+    /* ---------- Passo 4: PDF ---------- */
+    $("btn-pdf").addEventListener("click", () => {
+      if (!window.pdfMake) { $("btn-pdf").textContent = "Carregando… tente de novo em instantes"; return; }
+      const cod = dadosFinais.d.codigo;
+      pdfMake.createPdf(MDM.toPDF(blocos, cod)).download(`Contrato-${cod}.pdf`);
+    });
+
+    /* ---------- Documentos para consultar ---------- */
+    document.querySelectorAll("[data-doc]").forEach((b) => b.addEventListener("click", () => {
+      const tipo = b.dataset.doc;
+      if (tipo === "resumo") {
+        const { r, d } = dadosContrato();
+        if (r.erro) return MDM.abrirDocumento("Resumo da reserva", [{ p: "Preencha as datas de entrada e saída para ver o resumo com valores." }]);
+        return MDM.abrirDocumento("Resumo da reserva", MDM.anexoA(r, d));
+      }
+      if (tipo === "regulamento") return MDM.abrirDocumento("Regulamento da casa", MDM.anexoB());
+      if (tipo === "inventario") return MDM.abrirDocumento("Inventário", MDM.anexoC());
+      if (tipo === "guia") return MDM.abrirDocumento("Guia do hóspede", MDM.guia());
+    }));
+  })();
+  </script>
+</body>
+</html>
