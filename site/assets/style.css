@@ -105,32 +105,26 @@ a { color: var(--mar); }
 .marca img { width: 38px; height: 38px; }
 .topo .btn { min-height: 40px; padding: 0 1rem; font-size: 0.95rem; }
 
-/* ---------- Abertura ----------
- * Celular: logo colorida sobre areia e, abaixo, a foto da rede.
- * Computador: foto do mar em tela cheia com a logo em creme por cima.
- */
-.abertura { display: grid; background: var(--papel); }
-.abertura-marca { display: grid; justify-items: center; gap: 1rem; text-align: center; padding-block: 1.75rem 1.5rem; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+/* ---------- Abertura: foto do mar em tela cheia com a logo em creme por cima (igual no celular e no computador) ---------- */
+.abertura { position: relative; display: grid; place-items: center; min-height: min(80vh, 760px); overflow: hidden; background: var(--petroleo-escuro); }
+.abertura-fundo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 55%; }
+.abertura::after {
+  content: ""; position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 55% 60% at 50% 46%, rgba(46, 64, 63, 0.6), rgba(46, 64, 63, 0.3) 75%),
+    linear-gradient(180deg, rgba(46, 64, 63, 0.1), rgba(46, 64, 63, 0.45));
+}
+.abertura-marca { position: relative; z-index: 1; display: grid; justify-items: center; gap: 1.1rem; text-align: center; padding-block: 3rem; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .abertura-marca h1 { margin: 0; line-height: 0; }
-.abertura-marca .logo-cor { width: min(82vw, 340px); height: auto; }
-.abertura-marca .logo-creme, .abertura-marca .chamada { display: none; }
-.abertura-marca .local { color: var(--tinta-suave); max-width: 26rem; }
-.abertura-fundo img { width: 100%; height: 46vh; object-fit: cover; object-position: 70% 100%; }
-
-@media (min-width: 761px) {
-  .abertura { position: relative; place-items: center; min-height: min(80vh, 760px); overflow: hidden; background: var(--petroleo-escuro); }
-  .abertura-fundo img { position: absolute; inset: 0; height: 100%; object-position: center 55%; }
-  .abertura::after {
-    content: ""; position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 55% 60% at 50% 46%, rgba(46, 64, 63, 0.6), rgba(46, 64, 63, 0.3) 75%),
-      linear-gradient(180deg, rgba(46, 64, 63, 0.1), rgba(46, 64, 63, 0.45));
-  }
-  .abertura-marca { position: relative; z-index: 1; gap: 1.1rem; padding-block: 3rem; }
-  .abertura-marca .logo-cor { display: none; }
-  .abertura-marca .logo-creme { display: block; width: min(440px, 38vw); height: auto; }
-  .abertura-marca .chamada { display: block; color: var(--papel); font-size: 0.85rem; letter-spacing: 0.3em; text-transform: uppercase; }
-  .abertura-marca .local { color: rgba(244, 240, 233, 0.86); }
+.abertura-marca .logo-creme { width: min(440px, 38vw); height: auto; }
+.abertura-marca .chamada { color: var(--papel); font-size: 0.85rem; letter-spacing: 0.3em; text-transform: uppercase; }
+.abertura-marca .local { color: rgba(244, 240, 233, 0.86); max-width: 26rem; }
+@media (max-width: 760px) {
+  .abertura { min-height: min(78vh, 640px); }
+  .abertura::after { background: radial-gradient(ellipse 90% 55% at 50% 46%, rgba(46, 64, 63, 0.62), rgba(46, 64, 63, 0.35) 80%), linear-gradient(180deg, rgba(46, 64, 63, 0.15), rgba(46, 64, 63, 0.5)); }
+  .abertura-marca { gap: 0.9rem; padding-block: 2.5rem; }
+  .abertura-marca .logo-creme { width: min(78vw, 330px); }
+  .abertura-marca .chamada { font-size: 0.72rem; letter-spacing: 0.22em; }
 }
 
 /* ---------- Atalhos (os botões pedidos) ---------- */
