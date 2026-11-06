@@ -209,7 +209,7 @@
 
       { h: "11. Aceite e assinatura" },
       { p: "As partes confirmam o preenchimento das condições, a leitura e o recebimento dos anexos, e que não restam condições comerciais essenciais em aberto. Este contrato é assinado eletronicamente pelas partes por meio do serviço de assinatura do gov.br, nos termos da Lei nº 14.063/2020." },
-      { kv: [["Local e data", `Conde - PB, ${br(new Date())}`], ["LOCADOR", L.nome], ["LOCATÁRIO", d.nome]] },
+      { kv: [["Local e data", `Conde - PB, ${br(parseISO(d.dataContrato) || new Date())}`], ["LOCADOR", L.nome], ["LOCATÁRIO", d.nome]] },
       { p: "Assinaturas eletrônicas pelo gov.br nesta página." },
 
       { quebra: true }, ...anexoA(r, d),
@@ -237,8 +237,9 @@
   }
 
   /* ---------- Render PDF (pdfmake) ---------- */
-  function toPDF(blocos, codigo) {
+  function toPDF(blocos, codigo, logo) {
     const content = [];
+    if (logo) content.push({ image: logo, width: 150, alignment: "center", margin: [0, 0, 0, 14] });
     blocos.forEach((b) => {
       if (b.titulo) content.push({ text: b.titulo, style: "titulo" });
       else if (b.h) content.push({ text: b.h, style: "h" });
@@ -248,8 +249,8 @@
       else if (b.tabela) {
         const t = b.tabela;
         const tabela = {
-          table: { headerRows: 1, widths: t.larguras || t.cab.map(() => "*"), body: [t.cab.map((c) => ({ text: c, bold: true, fillColor: "#E6EFEE" })), ...t.linhas.map((l, i) => l.map((c) => ({ text: c, bold: t.destaqueUltima && i === t.linhas.length - 1 })))] },
-          layout: { hLineColor: "#C9D6D4", vLineColor: "#C9D6D4", hLineWidth: () => 0.5, vLineWidth: () => 0.5, paddingTop: () => 4, paddingBottom: () => 4 },
+          table: { headerRows: 1, widths: t.larguras || t.cab.map(() => "*"), body: [t.cab.map((c) => ({ text: c, bold: true, fillColor: "#E6DED1" })), ...t.linhas.map((l, i) => l.map((c) => ({ text: c, bold: t.destaqueUltima && i === t.linhas.length - 1 })))] },
+          layout: { hLineColor: "#D3C2A6", vLineColor: "#D3C2A6", hLineWidth: () => 0.5, vLineWidth: () => 0.5, paddingTop: () => 4, paddingBottom: () => 4 },
           style: "p",
         };
         content.push(t.linhas.length <= 15 ? { stack: [tabela], unbreakable: true } : tabela);
@@ -259,16 +260,27 @@
       info: { title: `Contrato ${codigo} — ${C.nome}` },
       pageSize: "A4",
       pageMargins: [56, 64, 56, 56],
-      header: (page) => ({ text: `${C.nome} · Reserva ${codigo}`, alignment: "right", margin: [56, 28, 56, 0], fontSize: 8, color: "#5B7378" }),
-      footer: (page, pages) => ({ text: `Página ${page} de ${pages}`, alignment: "center", fontSize: 8, color: "#5B7378", margin: [0, 16, 0, 0] }),
+      header: (page) => ({ text: `${C.nome} · Reserva ${codigo}`, alignment: "right", margin: [56, 28, 56, 0], fontSize: 8, color: "#6D8D8A" }),
+      footer: (page, pages) => ({ text: `Página ${page} de ${pages}`, alignment: "center", fontSize: 8, color: "#6D8D8A", margin: [0, 16, 0, 0] }),
       content,
       styles: {
-        titulo: { fontSize: 16, bold: true, color: "#0F4C5C", margin: [0, 0, 0, 10] },
-        h: { fontSize: 11, bold: true, color: "#0F4C5C", margin: [0, 10, 0, 4] },
+        titulo: { fontSize: 16, bold: true, color: "#7A6548", margin: [0, 0, 0, 10] },
+        h: { fontSize: 11, bold: true, color: "#3E5554", margin: [0, 10, 0, 4] },
         p: { fontSize: 9.5, lineHeight: 1.3, margin: [0, 0, 0, 6] },
       },
-      defaultStyle: { font: "Roboto", color: "#17323A" },
+      defaultStyle: { font: "Roboto", color: "#3E5554" },
     };
+  }
+
+  /* Logo para o PDF (carregada uma vez; sem logo, o PDF sai mesmo assim) */
+  let logoCache = null;
+  async function logoPDF() {
+    if (logoCache !== null) return logoCache;
+    try {
+      const b = await (await fetch("assets/marca/logo-pdf.png")).blob();
+      logoCache = await new Promise((ok) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.onerror = () => ok(""); fr.readAsDataURL(b); });
+    } catch { logoCache = ""; }
+    return logoCache;
   }
 
   /* ---------- Modal de documento ---------- */
@@ -298,5 +310,5 @@
     document.body.prepend(f);
   }
 
-  window.MDM = { C, money, parseISO, iso, br, brLong, addDays, orcamento, zap, codigoReserva, contrato, anexoA, anexoB, anexoC, guia, toHTML, toPDF, abrirDocumento, faixaTeste, esc };
+  window.MDM = { C, money, parseISO, iso, br, brLong, addDays, orcamento, zap, codigoReserva, contrato, anexoA, anexoB, anexoC, guia, toHTML, toPDF, logoPDF, abrirDocumento, faixaTeste, esc };
 })();

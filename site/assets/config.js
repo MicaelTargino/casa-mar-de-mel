@@ -18,6 +18,9 @@ window.CASA = {
   mapa: "https://www.google.com/maps/search/?api=1&query=Rua+Ouricuri+Tabatinga+II+Conde+PB",
   airbnb: "https://www.airbnb.com.br/rooms/1785753726228145125",
 
+  // URL do Apps Script (apps-script/LEIAME.md). Vazio = sem envio automático; o site oferece o WhatsApp.
+  envioUrl: "",
+
   whatsapp: "5583999999999", // EXEMPLO — número com DDI e DDD, só dígitos
   whatsappExibicao: "(83) 99999-9999", // EXEMPLO
 

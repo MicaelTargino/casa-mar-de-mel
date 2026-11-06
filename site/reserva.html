@@ -5,16 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Reserva · Casa Mar de Mel</title>
   <meta name="robots" content="noindex">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%230f4c5c%27/%3E%3Cpath d=%27M5 20c3-3 5-3 8 0s5 3 8 0 5-3 6-1%27 stroke=%27%23e3a33b%27 stroke-width=%273%27 fill=%27none%27 stroke-linecap=%27round%27/%3E%3C/svg%3E">
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/marca/icone-64.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/marca/icone-32.png">
+  <link rel="apple-touch-icon" href="assets/marca/icone-180.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&family=Gloock&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Cormorant+SC:wght@600&family=Figtree:wght@400;700&display=swap">
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
   <header class="topo">
     <div class="envelope">
-      <a class="marca" href="index.html">Casa Mar de Mel</a>
+      <a class="marca" href="index.html"><img src="assets/marca/icone-64.png" alt="" width="38" height="38">Casa Mar de Mel</a>
       <a class="btn btn-linha" id="zap-topo" href="#" target="_blank" rel="noopener">WhatsApp</a>
     </div>
   </header>
@@ -42,7 +44,9 @@
       <section class="painel" data-painel="1">
         <h2>Seus dados</h2>
         <p>Quem preenche é o responsável pela reserva, que assina o contrato.</p>
+        <p class="status status-erro" id="aviso-link" role="alert" hidden></p>
         <form id="form-dados" novalidate>
+          <input class="isca" id="f-site" name="site" tabindex="-1" autocomplete="off" aria-hidden="true">
           <fieldset>
             <legend>Responsável</legend>
             <label for="f-nome">Nome completo<input id="f-nome" name="nome" autocomplete="name" required></label>
@@ -124,7 +128,12 @@
         <div class="bloco">
           <div class="doc doc-folha" id="contrato" tabindex="0"></div>
           <label class="aceite" for="f-aceite"><input type="checkbox" id="f-aceite"> Li o contrato e os anexos A, B e C e concordo com as condições.</label>
-          <div class="acoes"><button class="btn btn-linha" type="button" data-voltar>Corrigir meus dados</button><button class="btn btn-mel" type="button" id="btn-ir-assinar" disabled>Continuar para assinatura</button></div>
+          <p class="status" id="status-envio" role="status" hidden></p>
+          <div class="alternativa" id="alt-envio" hidden>
+            <p>Se preferir, mande o contrato e os documentos pelo WhatsApp da casa e siga para a assinatura.</p>
+            <button class="btn btn-zap" type="button" id="btn-zap-docs">Enviar pelo WhatsApp</button>
+          </div>
+          <div class="acoes"><button class="btn btn-linha" type="button" data-voltar>Corrigir meus dados</button><button class="btn btn-mel" type="button" id="btn-ir-assinar" disabled>Aceitar e enviar</button></div>
         </div>
       </section>
 
@@ -133,17 +142,32 @@
         <h2>Assine pelo gov.br</h2>
         <p>A assinatura do gov.br é gratuita e tem validade jurídica. Você precisa de uma conta gov.br nível prata ou ouro.</p>
         <div class="bloco">
-          <div class="cartao-final">
+          <p class="status status-ok" id="recebido" hidden></p>
+          <div class="cartao-final" id="cartao-assinar">
             <ol class="passo-a-passo">
               <li><strong>Baixe o contrato.</strong> <button class="btn btn-mel" type="button" id="btn-pdf" style="margin-top:.5rem">Baixar contrato em PDF</button></li>
               <li>Abra o <a href="https://assinador.iti.br" target="_blank" rel="noopener">assinador do gov.br</a> e entre com sua conta.</li>
               <li>Escolha o arquivo do contrato, posicione a assinatura na última página do contrato e clique em assinar.</li>
-              <li>Baixe o arquivo assinado e envie para a gente pelo WhatsApp. Depois a Casa Mar de Mel assina e te devolve a via final.</li>
+              <li>Baixe o arquivo assinado e envie aqui. Pode voltar a esta página depois de assinar: ela lembra da sua reserva neste aparelho.</li>
             </ol>
-            <a class="btn btn-zap" id="zap-assinado" href="#" target="_blank" rel="noopener">Enviar contrato assinado pelo WhatsApp</a>
+            <div class="upload" id="up-ass">
+              <label for="f-arqAss">Contrato assinado<span class="ajuda">O PDF que o assinador do gov.br devolve.</span>
+                <input id="f-arqAss" type="file" accept="application/pdf">
+              </label>
+              <div class="previa" hidden></div>
+            </div>
+            <p class="status" id="status-assinado" role="status" hidden></p>
+            <div class="acoes">
+              <button class="btn btn-zap" type="button" id="btn-zap-assinado">Enviar pelo WhatsApp</button>
+              <button class="btn btn-mel" type="button" id="btn-enviar-assinado">Enviar contrato assinado</button>
+            </div>
           </div>
-          <p class="nota-privacidade">Depois de pagar o sinal, você recebe o guia do hóspede com Wi-Fi, chaves e orientações de chegada.</p>
-          <div class="acoes"><button class="btn btn-linha" type="button" data-voltar>Voltar ao contrato</button><span></span></div>
+          <div class="cartao-final" id="concluido" hidden>
+            <h3 class="doc-h" style="margin:0">Pronto, recebemos o contrato assinado.</h3>
+            <p>A Casa Mar de Mel confere, assina e devolve a via final pelo WhatsApp. Depois do pagamento do sinal, você recebe o guia do hóspede com Wi-Fi, chaves e orientações de chegada.</p>
+            <p class="nota-privacidade">Seus dados foram apagados deste aparelho.</p>
+          </div>
+          <div class="acoes" id="acoes-p4"><button class="btn btn-linha" type="button" data-voltar>Voltar ao contrato</button><span></span></div>
         </div>
       </section>
     </main>
@@ -162,6 +186,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.10/vfs_fonts.js" defer></script>
   <script src="assets/config.js"></script>
   <script src="assets/app.js"></script>
+  <script src="assets/envio.js"></script>
   <script>
   (function () {
     const { C, money, zap, orcamento, parseISO, iso, br, brLong, addDays, esc } = MDM;
@@ -293,7 +318,13 @@
       $(inputId).addEventListener("change", (e) => {
         const f = e.target.files[0]; const box = $(boxId); const prev = box.querySelector(".previa");
         if (!f) { box.classList.remove("ok"); prev.hidden = true; delete arquivos[chave]; return; }
-        if (f.size > 10 * 1024 * 1024) { e.target.value = ""; prev.hidden = false; prev.textContent = "Arquivo acima de 10 MB. Tire uma foto com menos zoom ou envie em PDF."; return; }
+        const ehImagem = f.type.startsWith("image/");
+        const limite = (ehImagem ? 25 : 8) * 1024 * 1024; // fotos são reduzidas antes do envio; PDFs vão como estão
+        if (f.size > limite) {
+          e.target.value = ""; box.classList.remove("ok"); delete arquivos[chave]; prev.hidden = false;
+          prev.textContent = ehImagem ? "Foto acima de 25 MB. Tire outra com menos zoom." : "PDF acima de 8 MB. Envie uma foto do documento no lugar.";
+          return;
+        }
         arquivos[chave] = f; box.classList.add("ok"); prev.hidden = false;
         const tam = (f.size / 1024 / 1024).toFixed(1).replace(".", ",") + " MB";
         if (f.type.startsWith("image/")) {
@@ -311,11 +342,24 @@
       $("erro-2").hidden = true; montarContrato(); ir(3);
     });
 
+    /* ---------- Estado do envio (para o cliente voltar depois de assinar) ---------- */
+    const CHAVE_ENVIO = "mdm-reserva-envio";
+    const chaveLink = ["entrada", "saida", "adultos", "criancas", "desconto"].map((k) => q.get(k) || "").join("|");
+    function lerEnvio() { try { const e = JSON.parse(localStorage.getItem(CHAVE_ENVIO) || "null"); return e && e.chaveLink === chaveLink ? e : null; } catch { return null; } }
+    function salvarEnvio(e) { try { localStorage.setItem(CHAVE_ENVIO, JSON.stringify({ ...e, chaveLink })); } catch {} }
+    function apagarTudoDoAparelho() { try { localStorage.removeItem(CHAVE); localStorage.removeItem(CHAVE_ENVIO); } catch {} }
+    let envio = lerEnvio();
+
+    function status(id, tipo, texto) {
+      const el = $(id); el.hidden = !texto; el.textContent = texto || "";
+      el.className = "status" + (tipo ? " status-" + tipo : "");
+    }
+
     /* ---------- Passo 3: contrato ---------- */
     let blocos = null, dadosFinais = null;
     function dadosContrato() {
       const { d, r } = calc();
-      return { r, d: { ...d, codigo: q.get("codigo") || MDM.codigoReserva(d.entrada, d.nome), hospedesLista: lerHospedes() } };
+      return { r, d: { ...d, codigo: envio?.codigo || q.get("codigo") || MDM.codigoReserva(d.entrada, d.nome), hospedesLista: lerHospedes(), dataContrato: envio?.dataContrato || iso(new Date()) } };
     }
     function montarContrato() {
       const { r, d } = dadosContrato();
@@ -324,20 +368,108 @@
       $("contrato").innerHTML = MDM.toHTML(blocos);
       $("contrato").scrollTop = 0;
       $("f-aceite").checked = false; $("btn-ir-assinar").disabled = true;
+      status("status-envio"); $("alt-envio").hidden = true;
     }
+    async function pdfBlob() {
+      if (!window.pdfMake) throw new Error("O gerador de PDF ainda está carregando. Tente de novo em instantes.");
+      const logo = await MDM.logoPDF();
+      return new Promise((ok) => pdfMake.createPdf(MDM.toPDF(blocos, dadosFinais.d.codigo, logo)).getBlob((b) => ok(new File([b], `Contrato-${dadosFinais.d.codigo}.pdf`, { type: "application/pdf" }))));
+    }
+    function linkDaUrl() { return { entrada: q.get("entrada"), saida: q.get("saida"), adultos: q.get("adultos"), criancas: q.get("criancas"), desconto: q.get("desconto") || 0, c: q.get("c") }; }
+
     $("f-aceite").addEventListener("change", (e) => ($("btn-ir-assinar").disabled = !e.target.checked));
-    $("btn-ir-assinar").addEventListener("click", () => {
+    $("btn-ir-assinar").addEventListener("click", async () => {
       const { r, d } = dadosFinais;
-      $("zap-assinado").href = zap(`Olá! Segue o contrato assinado da reserva ${d.codigo} (${br(r.entrada)} a ${br(r.saida)}), em nome de ${d.nome}.`);
-      ir(4);
+      if (!MDMEnvio.ativo() || envio?.token) { irParaAssinatura(); return; }
+      const btn = $("btn-ir-assinar");
+      btn.disabled = true; btn.textContent = "Enviando…";
+      status("status-envio", "", "Enviando seus dados e documentos. Pode levar alguns segundos.");
+      try {
+        const [contrato, doc, res] = await Promise.all([pdfBlob(), MDMEnvio.prepararArquivo(arquivos.doc), MDMEnvio.prepararArquivo(arquivos.res)]);
+        const resp = await MDMEnvio.chamar("enviarReserva", {
+          site: $("f-site").value,
+          codigo: d.codigo,
+          link: linkDaUrl(),
+          dados: { ...coletar(), hospedes: lerHospedes(), total: money(r.total) },
+          contrato: await MDMEnvio.anexo(contrato),
+          documento: await MDMEnvio.anexo(doc),
+          comprovante: await MDMEnvio.anexo(res),
+        });
+        envio = { token: resp.token, codigo: d.codigo, dataContrato: d.dataContrato };
+        salvarEnvio(envio);
+        irParaAssinatura();
+      } catch (err) {
+        status("status-envio", "erro", err.message);
+        $("alt-envio").hidden = false;
+        btn.textContent = "Tentar enviar de novo";
+        btn.disabled = false;
+      }
     });
 
-    /* ---------- Passo 4: PDF ---------- */
-    $("btn-pdf").addEventListener("click", () => {
-      if (!window.pdfMake) { $("btn-pdf").textContent = "Carregando… tente de novo em instantes"; return; }
-      const cod = dadosFinais.d.codigo;
-      pdfMake.createPdf(MDM.toPDF(blocos, cod)).download(`Contrato-${cod}.pdf`);
+    // Alternativa: compartilhar contrato + documentos no WhatsApp
+    $("btn-zap-docs").addEventListener("click", async () => {
+      const { r, d } = dadosFinais;
+      const texto = `Reserva ${d.codigo} (${br(r.entrada)} a ${br(r.saida)}), em nome de ${d.nome}: contrato e documentos.`;
+      try {
+        const files = [await pdfBlob(), arquivos.doc, arquivos.res].filter(Boolean);
+        if (MDMEnvio.podeCompartilhar(files)) { await MDMEnvio.compartilhar(files, texto); irParaAssinatura(); return; }
+      } catch (err) { if (err.name === "AbortError") return; }
+      window.open(zap(texto + " Vou anexar os arquivos nesta conversa."), "_blank", "noopener");
+      irParaAssinatura();
     });
+
+    /* ---------- Passo 4: assinatura ---------- */
+    function irParaAssinatura() {
+      const { d } = dadosFinais;
+      if (envio?.token) status("recebido", "ok", `Recebemos sua ficha e seus documentos. Código da reserva: ${d.codigo}.`);
+      const online = MDMEnvio.ativo() && !!envio?.token;
+      $("btn-enviar-assinado").hidden = !online;
+      $("btn-zap-assinado").className = online ? "btn btn-linha" : "btn btn-zap";
+      ir(4);
+    }
+    $("btn-pdf").addEventListener("click", async () => {
+      if (!window.pdfMake) { $("btn-pdf").textContent = "Carregando… tente de novo em instantes"; return; }
+      pdfMake.createPdf(MDM.toPDF(blocos, dadosFinais.d.codigo, await MDM.logoPDF())).download(`Contrato-${dadosFinais.d.codigo}.pdf`);
+    });
+    prever("f-arqAss", "up-ass", "ass");
+
+    function concluir() {
+      apagarTudoDoAparelho();
+      $("cartao-assinar").hidden = true; $("recebido").hidden = true; $("acoes-p4").hidden = true;
+      $("concluido").hidden = false;
+    }
+    $("btn-enviar-assinado").addEventListener("click", async () => {
+      const f = arquivos.ass;
+      if (!f) return status("status-assinado", "erro", "Escolha o PDF assinado antes de enviar.");
+      if (f.type !== "application/pdf") return status("status-assinado", "erro", "O contrato assinado precisa ser o PDF que o gov.br devolve.");
+      const btn = $("btn-enviar-assinado"); btn.disabled = true; btn.textContent = "Enviando…";
+      status("status-assinado", "", "Enviando o contrato assinado.");
+      try {
+        await MDMEnvio.chamar("enviarAssinado", { site: $("f-site").value, token: envio.token, arquivo: await MDMEnvio.anexo(f) });
+        concluir();
+      } catch (err) {
+        status("status-assinado", "erro", err.message + " Se continuar, use o botão do WhatsApp.");
+        btn.disabled = false; btn.textContent = "Tentar enviar de novo";
+      }
+    });
+    $("btn-zap-assinado").addEventListener("click", async () => {
+      const { r, d } = dadosFinais;
+      const texto = `Segue o contrato assinado da reserva ${d.codigo} (${br(r.entrada)} a ${br(r.saida)}), em nome de ${d.nome}.`;
+      if (arquivos.ass && MDMEnvio.podeCompartilhar([arquivos.ass])) {
+        try { await MDMEnvio.compartilhar([arquivos.ass], texto); concluir(); return; } catch (err) { if (err.name === "AbortError") return; }
+      }
+      window.open(zap(texto + " Vou anexar o PDF nesta conversa."), "_blank", "noopener");
+    });
+
+    /* ---------- Conferência do link e retorno ---------- */
+    if (envio?.token) { montarContrato(); irParaAssinatura(); window.scrollTo(0, 0); }
+    else if (MDMEnvio.ativo() && travado) {
+      MDMEnvio.chamar("conferirLink", { link: linkDaUrl() }).then((r) => {
+        if (r.valido) return;
+        status("aviso-link", "erro", "Este link de reserva foi alterado ou está incompleto. Peça um link novo pelo WhatsApp da casa.");
+        $("form-dados").querySelectorAll("input, select, button").forEach((el) => (el.disabled = true));
+      }).catch(() => {});
+    }
 
     /* ---------- Documentos para consultar ---------- */
     document.querySelectorAll("[data-doc]").forEach((b) => b.addEventListener("click", () => {

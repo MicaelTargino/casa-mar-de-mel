@@ -5,15 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Gerar link de reserva · Casa Mar de Mel</title>
   <meta name="robots" content="noindex">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%230f4c5c%27/%3E%3Cpath d=%27M5 20c3-3 5-3 8 0s5 3 8 0 5-3 6-1%27 stroke=%27%23e3a33b%27 stroke-width=%273%27 fill=%27none%27 stroke-linecap=%27round%27/%3E%3C/svg%3E">
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/marca/icone-64.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/marca/icone-32.png">
+  <link rel="apple-touch-icon" href="assets/marca/icone-180.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&family=Gloock&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Cormorant+SC:wght@600&family=Figtree:wght@400;700&display=swap">
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
   <header class="topo">
-    <div class="envelope"><a class="marca" href="index.html">Casa Mar de Mel</a><span style="color:var(--tinta-suave)">Uso da família</span></div>
+    <div class="envelope"><a class="marca" href="index.html"><img src="assets/marca/icone-64.png" alt="" width="38" height="38">Casa Mar de Mel</a><span style="color:var(--tinta-suave)">Uso da família</span></div>
   </header>
 
   <section class="secao">
@@ -32,6 +34,12 @@
           </div>
           <label for="l-desconto">Desconto em reais<span class="ajuda">Opcional. Sai discriminado no contrato.</span><input type="number" id="l-desconto" min="0" step="10" value="0"></label>
           <label for="l-telefone">WhatsApp do cliente<span class="ajuda">Opcional. Com DDD, para abrir a conversa já com a mensagem.</span><input type="tel" id="l-telefone" placeholder="83 99999-0000"></label>
+          <div id="bloco-senha" hidden style="display:grid;gap:.5rem">
+            <label for="l-senha">Senha da família<span class="ajuda">Garante que ninguém mude datas ou desconto editando o link.</span><input type="password" id="l-senha" autocomplete="current-password"></label>
+            <label class="senha-linha" for="l-lembrar"><input type="checkbox" id="l-lembrar"> Lembrar a senha neste aparelho</label>
+          </div>
+          <button class="btn btn-mel" type="submit" id="btn-gerar">Gerar link</button>
+          <p class="status" id="status-link" role="status" hidden></p>
         </form>
         <div class="recibo" id="saida-link" aria-live="polite"></div>
       </div>
@@ -40,6 +48,7 @@
 
   <script src="assets/config.js"></script>
   <script src="assets/app.js"></script>
+  <script src="assets/envio.js"></script>
   <script>
   (function () {
     const { C, money, orcamento, iso, br, addDays, esc, parseISO } = MDM;
@@ -49,18 +58,22 @@
     const sexta = addDays(hoje, ((5 - hoje.getDay() + 7) % 7) || 7);
     $("l-entrada").value = iso(sexta); $("l-saida").value = iso(addDays(sexta, 3));
 
-    function gerar() {
+    const conferido = MDMEnvio.ativo();
+    $("bloco-senha").hidden = !conferido;
+    const SENHA = "mdm-senha-familia";
+    try { const s = localStorage.getItem(SENHA); if (s) { $("l-senha").value = s; $("l-lembrar").checked = true; } } catch {}
+
+    function ler() {
       const e = $("l-entrada").value, s = $("l-saida").value;
       const a = +$("l-adultos").value || 1, c = +$("l-criancas").value || 0, desc = +$("l-desconto").value || 0;
-      const r = orcamento({ entrada: e, saida: s, hospedes: a + c, desconto: desc });
+      return { e, s, a, c, desc, r: orcamento({ entrada: e, saida: s, hospedes: a + c, desconto: desc }) };
+    }
+
+    // Resumo do valor, sempre atualizado
+    function resumo() {
+      const { a, c, r } = ler();
       const out = $("saida-link");
       if (r.erro) { out.innerHTML = `<p class="erro">${esc(r.erro)}</p>`; return; }
-      const base = new URL("reserva.html", location.href);
-      base.search = new URLSearchParams({ entrada: e, saida: s, adultos: a, criancas: c, ...(desc ? { desconto: desc } : {}) }).toString();
-      const link = base.toString();
-      const msg = `Olá! Segue o link para concluir sua reserva na ${C.nome} (${br(r.entrada)} a ${br(r.saida)}, total ${money(r.total)}). É só preencher seus dados, enviar os documentos e assinar o contrato pelo gov.br:\n${link}`;
-      const tel = $("l-telefone").value.replace(/\D/g, "");
-      const zapUrl = `https://wa.me/${tel ? (tel.length <= 11 ? "55" + tel : tel) : ""}?text=${encodeURIComponent(msg)}`;
       out.innerHTML = `
         <p class="recibo-periodo">${r.noites} diárias · ${a + c} pessoas</p>
         ${r.grupos.map((g) => `<div class="recibo-linha"><span>${g.noites} × ${money(g.diaria)} (${esc(g.nome)})</span><span>${money(g.subtotal)}</span></div>`).join("")}
@@ -68,7 +81,38 @@
         ${r.desconto ? `<div class="recibo-linha"><span>Desconto</span><span>− ${money(r.desconto)}</span></div>` : ""}
         <div class="recibo-total"><span>Total</span><strong>${money(r.total)}</strong></div>
         ${r.abaixoDoMinimo ? `<p class="aviso">Abaixo do mínimo de ${r.minimo} diárias deste período. O link funciona mesmo assim.</p>` : ""}
-        <p class="obs">Link para o cliente:</p>
+        <div id="link-pronto"></div>`;
+    }
+
+    async function gerar(ev) {
+      ev.preventDefault();
+      const { e, s, a, c, desc, r } = ler();
+      if (r.erro) return;
+      const params = { entrada: e, saida: s, adultos: a, criancas: c, ...(desc ? { desconto: desc } : {}) };
+      const btn = $("btn-gerar");
+      $("status-link").hidden = true;
+      if (conferido) {
+        const senha = $("l-senha").value;
+        if (!senha) { $("status-link").className = "status status-erro"; $("status-link").textContent = "Digite a senha da família."; $("status-link").hidden = false; return; }
+        btn.disabled = true; btn.textContent = "Gerando…";
+        try {
+          const resp = await MDMEnvio.chamar("assinarLink", { senha, link: { ...params, desconto: desc } });
+          params.c = resp.c;
+          try { $("l-lembrar").checked ? localStorage.setItem(SENHA, senha) : localStorage.removeItem(SENHA); } catch {}
+        } catch (err) {
+          $("status-link").className = "status status-erro"; $("status-link").textContent = err.message; $("status-link").hidden = false;
+          btn.disabled = false; btn.textContent = "Gerar link"; return;
+        }
+        btn.disabled = false; btn.textContent = "Gerar link";
+      }
+      const base = new URL("reserva.html", location.href);
+      base.search = new URLSearchParams(params).toString();
+      const link = base.toString();
+      const msg = `Olá! Segue o link para concluir sua reserva na ${C.nome} (${br(r.entrada)} a ${br(r.saida)}, total ${money(r.total)}). É só preencher seus dados, enviar os documentos e assinar o contrato pelo gov.br:\n${link}`;
+      const tel = $("l-telefone").value.replace(/\D/g, "");
+      const zapUrl = `https://wa.me/${tel ? (tel.length <= 11 ? "55" + tel : tel) : ""}?text=${encodeURIComponent(msg)}`;
+      $("link-pronto").innerHTML = `
+        <p class="obs">Link para o cliente${conferido ? " (conferido)" : ""}:</p>
         <p class="link-gerado" id="link-txt">${esc(link)}</p>
         <button class="btn btn-linha" type="button" id="btn-copiar">Copiar link</button>
         <a class="btn btn-zap" href="${zapUrl}" target="_blank" rel="noopener">Mandar pelo WhatsApp</a>`;
@@ -77,8 +121,9 @@
         catch { const sel = getSelection(); const rg = document.createRange(); rg.selectNodeContents($("link-txt")); sel.removeAllRanges(); sel.addRange(rg); $("btn-copiar").textContent = "Selecionado: copie com o menu"; }
       };
     }
-    $("form-link").addEventListener("input", gerar);
-    gerar();
+    $("form-link").addEventListener("input", (ev) => { if (ev.target.id !== "l-senha") resumo(); });
+    $("form-link").addEventListener("submit", gerar);
+    resumo();
   })();
   </script>
 </body>
