@@ -21,8 +21,8 @@ window.CASA = {
   // URL do Apps Script (apps-script/LEIAME.md). Vazio = sem envio automático; o site oferece o WhatsApp.
   envioUrl: "https://script.google.com/macros/s/AKfycbxKyg5dpZwXiKl3cKOop4MNLWhhzWnQRk-C1pPIVApFvU5BxwqvxxYlszSM2zC4E45yFw/exec",
 
-  whatsapp: "5583999999999", // EXEMPLO — número com DDI e DDD, só dígitos
-  whatsappExibicao: "(83) 99999-9999", // EXEMPLO
+  whatsapp: "5583988278172", // número com DDI e DDD, só dígitos
+  whatsappExibicao: "(83) 98827-8172",
 
   locador: {
     nome: "LUIZ FABIO TARGINO DE PAIVA CAVALCANTI",
