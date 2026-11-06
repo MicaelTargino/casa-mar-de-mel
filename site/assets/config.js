@@ -19,7 +19,7 @@ window.CASA = {
   airbnb: "https://www.airbnb.com.br/rooms/1785753726228145125",
 
   // URL do Apps Script (apps-script/LEIAME.md). Vazio = sem envio automático; o site oferece o WhatsApp.
-  envioUrl: "",
+  envioUrl: "https://script.google.com/macros/s/AKfycbxKyg5dpZwXiKl3cKOop4MNLWhhzWnQRk-C1pPIVApFvU5BxwqvxxYlszSM2zC4E45yFw/exec",
 
   whatsapp: "5583999999999", // EXEMPLO — número com DDI e DDD, só dígitos
   whatsappExibicao: "(83) 99999-9999", // EXEMPLO
