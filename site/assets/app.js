@@ -237,6 +237,8 @@
   }
 
   /* ---------- Render PDF (pdfmake) ---------- */
+  // O pdfmake altera os arrays que recebe (troca textos por objetos internos).
+  // Por isso tudo que vem do config é copiado antes de entrar no documento.
   function toPDF(blocos, codigo, logo) {
     const content = [];
     if (logo) content.push({ image: logo, width: 150, alignment: "center", margin: [0, 0, 0, 14] });
@@ -244,12 +246,12 @@
       if (b.titulo) content.push({ text: b.titulo, style: "titulo" });
       else if (b.h) content.push({ text: b.h, style: "h" });
       else if (b.p) content.push({ text: b.p, style: "p" });
-      else if (b.lista) content.push({ ul: b.lista, style: "p" });
+      else if (b.lista) content.push({ ul: b.lista.map(String), style: "p" });
       else if (b.kv) content.push({ table: { widths: ["auto", "*"], body: b.kv.map(([k, v]) => [{ text: k, bold: true }, v]) }, layout: "noBorders", style: "p" });
       else if (b.tabela) {
         const t = b.tabela;
         const tabela = {
-          table: { headerRows: 1, widths: t.larguras || t.cab.map(() => "*"), body: [t.cab.map((c) => ({ text: c, bold: true, fillColor: "#E6DED1" })), ...t.linhas.map((l, i) => l.map((c) => ({ text: c, bold: t.destaqueUltima && i === t.linhas.length - 1 })))] },
+          table: { headerRows: 1, widths: t.larguras ? [...t.larguras] : t.cab.map(() => "*"), body: [t.cab.map((c) => ({ text: c, bold: true, fillColor: "#E6DED1" })), ...t.linhas.map((l, i) => l.map((c) => ({ text: c, bold: t.destaqueUltima && i === t.linhas.length - 1 })))] },
           layout: { hLineColor: "#D3C2A6", vLineColor: "#D3C2A6", hLineWidth: () => 0.5, vLineWidth: () => 0.5, paddingTop: () => 4, paddingBottom: () => 4 },
           style: "p",
         };
